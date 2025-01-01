@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import axios from "axios";
+import { Link } from 'react-router-dom'
+import { ArrowLeft, Building2, GraduationCap } from "lucide-react";
 
 const StudentSignup = () => {
   const navigate = useNavigate(); // Initialize useNavigate
-  const [isStudent, setIsStudent] = useState(true);
   const [formData, setFormData] = useState({
     first_Name: "",
     last_Name: "",
@@ -55,31 +56,42 @@ const StudentSignup = () => {
     <div className="h-screen w-screen bg-[#EFF6FF] p-3 flex">
         {/* Left Side */}
         <div
-            className={`w-[434px] h-full rounded-xl transition-all duration-1000 ease-in-out ${
-                isStudent ? "bg-primary" : "bg-[#1F479A]"
-            }`}
-        ></div>
+            className={`w-[434px] h-full rounded-xl transition-all duration-1000 ease-in-out bg-primary px-6 py-8 flex flex-col justify-end`}
+        >
+            <div className='flex justify-between items-center'>
+                <div className='flex items-center gap-1 -ml-1'>
+                    <ArrowLeft size={20} color='white'/>
+                    <Link to={"/"}>
+                        <p className='text-white'>Back to Home</p>
+                    </Link>
+                </div>
+                <Link to={"/auth/student-login"}>
+                    <span className='text-white'>Login?</span>
+                </Link>
+            </div>
+
+        </div>
 
         {/* Right Side */}
         <div className="h-full w-full flex flex-col justify-center items-center">
             {/* Button to switch between Student and Company */}
-            <div className="bg-white rounded-full shadow-lg p-1 flex gap-1">
-                <button
-                    className={`px-16 py-4 rounded-full transition-all duration-500 ease-in-out ${
-                        isStudent ? "bg-primary text-white" : "bg-[#F6F6F6] text-gray-600"
-                    }`}
-                    onClick={() => setIsStudent(true)}
-                >
-                    I&apos;m a Student
-                </button>
-                <button
-                    className={`px-16 py-4 rounded-full transition-all duration-500 ease-in-out ${
-                        !isStudent ? "bg-[#1F479A] text-white" : "bg-[#F6F6F6] text-gray-600"
-                    }`}
-                    onClick={() => setIsStudent(false)}
-                >
-                    I&apos;m a Company
-                </button>
+            <div className="bg-white w-[476px] rounded-full shadow-lg p-1 flex gap-1">
+                <Link to="/auth/student-signup" >
+                    <div
+                        className={`w-[232px] justify-center py-4 rounded-full transition-all items-center flex gap-2 duration-500 ease-in-out bg-primary text-white`}
+                    >
+                        <GraduationCap size={24}/>
+                        <p>I'm a Student</p>
+                    </div>
+                </Link>
+                <Link to="/auth/company-signup" >
+                    <div
+                        className={`w-[232px] justify-center py-4 rounded-full transition-all items-center flex gap-2 duration-500 ease-in-out bg-[#F6F6F6] text-gray-600`}
+                    >
+                        <Building2 size={20}/>
+                        <p>I'm a Company</p>
+                    </div>
+                </Link>
             </div>
 
             {/* Student Signup Form */}
@@ -139,7 +151,7 @@ const StudentSignup = () => {
                     <div className="flex flex-col gap-1">
                         <label className="text-sm text-gray-600">Date of Birth</label>
                         <input
-                            type="text"
+                            type="date"
                             className="px-4 py-2 rounded-xl border border-[#BCC3D0] w-[232px]"
                             placeholder="01-01-2000"
                             name="date_of_birth"
@@ -180,8 +192,43 @@ const StudentSignup = () => {
                                 Select state
                             </option>
                             {/* Add other state options */}
-                            <option value="delhi">Delhi</option>
-                            <option value="maharashtra">Maharashtra</option>
+                            <option value="andaman-nicobar">Andaman and Nicobar Islands</option>
+                                <option value="andhra-pradesh">Andhra Pradesh</option>
+                                <option value="arunachal-pradesh">Arunachal Pradesh</option>
+                                <option value="assam">Assam</option>
+                                <option value="bihar">Bihar</option>
+                                <option value="chandigarh">Chandigarh</option>
+                                <option value="chhattisgarh">Chhattisgarh</option>
+                                <option value="dadra-nagar-haveli-daman-diu">Dadra and Nagar Haveli and Daman and Diu</option>
+                                <option value="delhi">Delhi</option>
+                                <option value="goa">Goa</option>
+                                <option value="gujarat">Gujarat</option>
+                                <option value="haryana">Haryana</option>
+                                <option value="himachal-pradesh">Himachal Pradesh</option>
+                                <option value="jammu-kashmir">Jammu and Kashmir</option>
+                                <option value="jharkhand">Jharkhand</option>
+                                <option value="karnataka">Karnataka</option>
+                                <option value="kerala">Kerala</option>
+                                <option value="ladakh">Ladakh</option>
+                                <option value="lakshadweep">Lakshadweep</option>
+                                <option value="madhya-pradesh">Madhya Pradesh</option>
+                                <option value="maharashtra">Maharashtra</option>
+                                <option value="manipur">Manipur</option>
+                                <option value="meghalaya">Meghalaya</option>
+                                <option value="mizoram">Mizoram</option>
+                                <option value="nagaland">Nagaland</option>
+                                <option value="odisha">Odisha</option>
+                                <option value="puducherry">Puducherry</option>
+                                <option value="punjab">Punjab</option>
+                                <option value="rajasthan">Rajasthan</option>
+                                <option value="sikkim">Sikkim</option>
+                                <option value="tamil-nadu">Tamil Nadu</option>
+                                <option value="telangana">Telangana</option>
+                                <option value="tripura">Tripura</option>
+                                <option value="uttar-pradesh">Uttar Pradesh</option>
+                                <option value="uttarakhand">Uttarakhand</option>
+                                <option value="west-bengal">West Bengal</option>
+
                         </select>
                     </div>
                 </div>
