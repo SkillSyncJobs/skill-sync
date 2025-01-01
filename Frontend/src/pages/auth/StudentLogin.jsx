@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Building2, GraduationCap } from "lucide-react";
 
 
 
@@ -35,21 +35,22 @@ const StudentLogin = () => {
                 </div>
 
                 {/* button to switch bw student and company */}
-                <div className="bg-white rounded-full shadow-lg p-1 flex gap-1 mt-4">
+                <div className="bg-white rounded-full shadow-lg p-1 mt-8 flex gap-1">
                     <Link to="/auth/student-login" >
-                        <button
-                            className={`px-16 py-4 rounded-full transition-all duration-500 ease-in-out bg-primary text-white`}
+                        <div
+                            className={`w-[232px] py-4 justify-center rounded-full transition-all items-center flex gap-2 duration-500 ease-in-out bg-primary text-white`}
                         >
-                            I'm a Student
-                        </button>
+                            <GraduationCap size={24}/>
+                            <p>I'm a Student</p>
+                        </div>
                     </Link>
-                    
                     <Link to="/auth/company-login" >
-                        <button
-                            className={`px-16 py-4 rounded-full transition-all duration-500 ease-in-out bg-[#F6F6F6] text-gray-600`}
+                        <div
+                            className={`w-[232px] py-4 justify-center rounded-full transition-all items-center flex gap-2 duration-500 ease-in-out bg-[#F6F6F6] text-gray-600`}
                         >
-                            I'm a Company
-                        </button>
+                            <Building2 size={20}/>
+                            <p>I'm a Company</p>
+                        </div>
                     </Link>
                 </div>
 
