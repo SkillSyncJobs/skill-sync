@@ -1,1 +1,1 @@
-# skill-sync
+# skillsync
