@@ -167,6 +167,27 @@ const CompanySignup = () => {
             "Brand Development and Positioning",
             "KPI Tracking and Performance Metrics"
         ];
+
+        const [imagePreview, setImagePreview] = useState(null);
+
+        // Add this function to handle image upload
+        const handleImageUpload = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                // Update formData with the file
+                setFormData({
+                    ...formData,
+                    companyLogo: file
+                });
+
+                // Create preview URL
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setImagePreview(reader.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        };
         
         const renderStep = () => {
             switch (step) {
@@ -773,83 +794,45 @@ const CompanySignup = () => {
                             
                                 {/* company signup form */}
                                 <form className="mt-8 flex flex-col gap-4">
-
-                                    {/* industry type */}
-                                    <div className="flex flex-col gap-1">
-                                        <label className="text-sm text-gray-600">Industry Type</label>
-                                        <select
-                                            className="px-4 py-2 rounded-xl border border-[#BCC3D0] w-[476px]"
-                                            name="industryType"
-                                            value={formData.industryType}
-                                            onChange={handleInputChange}
-                                        >
-                                            <option value="" disabled>
-                                                Select Industry Type
-                                            </option>
-                                            <option value="logistics">Logistics</option>
-                                            <option value="food-delivery">Food Delivery</option>
-                                            <option value="tech">Tech</option>
-                                        </select>
-                                    </div>
-
-                                    {/* headquarter location */}
-                                    <div className="flex flex-col gap-1">
-                                        <label className="text-sm text-gray-600">Where is your Headquarter Located?</label>
-                                        <select
-                                            className="px-4 py-2 rounded-xl border border-[#BCC3D0] w-[476px]"
-                                            name="headquarterLocation"
-                                            value={formData.headquarterLocation}
-                                            onChange={handleInputChange}
-                                        >
-                                            <option value="" disabled>
-                                                Select Location
-                                            </option>
-                                            <option value="gurugram">Gurugram</option>
-                                            <option value="bengaluru">Bengaluru</option>
-                                            <option value="delhi">Delhi</option>
-                                        </select>
-                                    </div>
-
-                                    {/* company size & year of establishment*/}
-                                    <div className="flex gap-4">
-                                        {/* company size */}
-                                        <div className="flex flex-col gap-1">
-                                            <span className="text-sm text-gray-600">Company Size</span>
-                                            <input 
-                                                type="text" 
-                                                name="companySize"
-                                                value={formData.companySize}
-                                                onChange={handleInputChange}
-                                                className="px-4 py-2 rounded-xl border border-[#BCC3D0] w-[232px]"
-                                                placeholder="15"
-                                            />
+                                    {/* Logo upload section */}
+                                    <div className="flex gap-8 items-center">
+                                        <div className="w-48 h-48 bg-white rounded-xl border border-gray-300 overflow-hidden">
+                                            {imagePreview ? (
+                                                <img 
+                                                    src={imagePreview} 
+                                                    alt="Company Logo" 
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                                    No image uploaded
+                                                </div>
+                                            )}
                                         </div>
-                                        {/* year of establishment */}
-                                        <div className="flex flex-col gap-1">
-                                            <span className="text-sm text-gray-600">Year of Establishment</span>
-                                            <input 
-                                                type="text" 
-                                                name="yearOfEstablishment"
-                                                value={formData.yearOfEstablishment}
-                                                onChange={handleInputChange}
-                                                className="px-4 py-2 rounded-xl border border-[#BCC3D0] w-[232px]"
-                                                placeholder="1987"
-                                            />
+                                        <div className="flex flex-col gap-4">
+                                            <span className="font-semibold">Company Logo</span>
+                                            <label className="px-4 py-2 rounded-xl bg-[#1F479A] text-white cursor-pointer text-center">
+                                                Upload Logo
+                                                <input 
+                                                    type="file" 
+                                                    accept="image/*"
+                                                    onChange={handleImageUpload}
+                                                    className="hidden"
+                                                />
+                                            </label>
                                         </div>
                                     </div>
 
                                     {/* buttons */}
                                     <div className="flex gap-4 w-[476px]">
-                                        
-                                        <button 
+                                        <button
                                             className="w-full bg-gray-200 border border-gray-300 rounded-xl py-2.5 text-gray-600 mt-4"
                                             type="button"
                                             onClick={handlePrevious}
                                         >
                                             Previous
                                         </button>
-
-                                        <button 
+                                        <button
                                             className="w-full bg-[#1F479A] rounded-xl py-2.5 text-white mt-4"
                                             type="button"
                                             onClick={handleNext}
@@ -857,8 +840,6 @@ const CompanySignup = () => {
                                             Next
                                         </button>
                                     </div>
-
-
                                 </form>
 
 
