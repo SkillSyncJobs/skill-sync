@@ -878,66 +878,32 @@ const CompanySignup = () => {
                                 {/* company signup form */}
                                 <form className="mt-8 flex flex-col gap-4">
 
-                                    {/* industry type */}
-                                    <div className="flex flex-col gap-1">
-                                        <label className="text-sm text-gray-600">Industry Type</label>
-                                        <select
-                                            className="px-4 py-2 rounded-xl border border-[#BCC3D0] w-[476px]"
-                                            name="industryType"
-                                            value={formData.industryType}
-                                            onChange={handleInputChange}
-                                        >
-                                            <option value="" disabled>
-                                                Select Industry Type
-                                            </option>
-                                            <option value="logistics">Logistics</option>
-                                            <option value="food-delivery">Food Delivery</option>
-                                            <option value="tech">Tech</option>
-                                        </select>
-                                    </div>
-
-                                    {/* headquarter location */}
-                                    <div className="flex flex-col gap-1">
-                                        <label className="text-sm text-gray-600">Where is your Headquarter Located?</label>
-                                        <select
-                                            className="px-4 py-2 rounded-xl border border-[#BCC3D0] w-[476px]"
-                                            name="headquarterLocation"
-                                            value={formData.headquarterLocation}
-                                            onChange={handleInputChange}
-                                        >
-                                            <option value="" disabled>
-                                                Select Location
-                                            </option>
-                                            <option value="gurugram">Gurugram</option>
-                                            <option value="bengaluru">Bengaluru</option>
-                                            <option value="delhi">Delhi</option>
-                                        </select>
-                                    </div>
-
-                                    {/* company size & year of establishment*/}
-                                    <div className="flex gap-4">
-                                        {/* company size */}
+                                    {/* company website */}
+                                    <div>
                                         <div className="flex flex-col gap-1">
-                                            <span className="text-sm text-gray-600">Company Size</span>
+                                            <span className="text-sm text-gray-600">Company Website</span>
                                             <input 
                                                 type="text" 
-                                                name="companySize"
-                                                value={formData.companySize}
+                                                name="companyWebsite"
+                                                value={formData.companyWebsite}
                                                 onChange={handleInputChange}
-                                                className="px-4 py-2 rounded-xl border border-[#BCC3D0] w-[232px]"
-                                                placeholder="15"
+                                                className="px-4 py-2 rounded-xl border border-[#BCC3D0] w-[476px]"
+                                                placeholder="skillsyncjob.com"
                                             />
                                         </div>
-                                        {/* year of establishment */}
+                                    </div>
+                                    
+                                    {/* company email */}
+                                    <div>
                                         <div className="flex flex-col gap-1">
-                                            <span className="text-sm text-gray-600">Year of Establishment</span>
+                                            <span className="text-sm text-gray-600">LinkedIn Profile</span>
                                             <input 
                                                 type="text" 
-                                                name="yearOfEstablishment"
-                                                value={formData.yearOfEstablishment}
+                                                name="linkedInProfile"
+                                                value={formData.linkedInProfile}
                                                 onChange={handleInputChange}
-                                                className="px-4 py-2 rounded-xl border border-[#BCC3D0] w-[232px]"
-                                                placeholder="1987"
+                                                className="px-4 py-2 rounded-xl border border-[#BCC3D0] w-[476px]"
+                                                placeholder="linkedin/user/skillsync"
                                             />
                                         </div>
                                     </div>
