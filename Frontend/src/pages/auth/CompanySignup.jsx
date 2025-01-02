@@ -242,52 +242,243 @@ const CompanySignup = () => {
 
                 case 2: 
                     return (
-                        <div>
-                            <p>second step</p>
-                            <div className="flex gap-4 w-[476px]">
-                                    
-                                <button 
-                                    className="w-full bg-[#1F479A] rounded-xl py-2.5 text-white mt-4"
-                                    type="button"
-                                    onClick={handlePrevious}
-                                >
-                                    Previous
-                                </button>
-                                <button 
-                                    className="w-full bg-[#1F479A] rounded-xl py-2.5 text-white mt-4"
-                                    type="button"
-                                    onClick={handleNext}
-                                >
-                                    Next
-                                </button>
+                        <>
+                            {/* left side */}
+                            <div
+                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-end`}
+                            >
+                                <div className='flex justify-between items-center'>
+                                    <div className='flex items-center gap-1 -ml-1'>
+                                        <ArrowLeft size={20} color='white'/>
+                                        <Link to={"/"}>
+                                            <p className='text-white'>Back to Home</p>
+                                        </Link>
+                                        
+                                    </div>
+                                    <Link to={"/auth/company-login"}>
+                                        <span className='text-white'>Login?</span>
+                                    </Link>
+                                </div>
+
                             </div>
-                        </div>
-                        
+
+                                
+                            {/* right side */}
+                            <div className="h-full w-full flex flex-col justify-center items-center">
+
+                            
+                                {/* company signup form */}
+                                <form className="mt-8 flex flex-col gap-4">
+
+                                    {/* industry type */}
+                                    <div className="flex flex-col gap-1">
+                                        <label className="text-sm text-gray-600">Industry Type</label>
+                                        <select
+                                            className="px-4 py-2 rounded-xl border border-[#BCC3D0] w-[476px]"
+                                            name="gender"
+                                            value={formData.industryType}
+                                            onChange={handleInputChange}
+                                        >
+                                            <option value="" disabled>
+                                                Select Industry Type
+                                            </option>
+                                            <option value="logistics">Logistics</option>
+                                            <option value="food-delivery">Food Delivery</option>
+                                            <option value="tech">Tech</option>
+                                        </select>
+                                    </div>
+
+                                    {/* headquarter location */}
+                                    <div className="flex flex-col gap-1">
+                                        <label className="text-sm text-gray-600">Where is your Headquarter Located?</label>
+                                        <select
+                                            className="px-4 py-2 rounded-xl border border-[#BCC3D0] w-[476px]"
+                                            name="gender"
+                                            value={formData.industryType}
+                                            onChange={handleInputChange}
+                                        >
+                                            <option value="" disabled>
+                                                Select Location
+                                            </option>
+                                            <option value="gurugram">Gurugram</option>
+                                            <option value="bengaluru">Bengaluru</option>
+                                            <option value="delhi">Delhi</option>
+                                        </select>
+                                    </div>
+
+                                    {/* company size & year of establishment*/}
+                                    <div className="flex gap-4">
+                                        {/* phone number */}
+                                        <div className="flex flex-col gap-1">
+                                            <span className="text-sm text-gray-600">Company Size</span>
+                                            <input 
+                                                type="text" 
+                                                className="px-4 py-2 rounded-xl border border-[#BCC3D0] w-[232px]"
+                                                placeholder="15"
+                                            />
+                                        </div>
+                                        {/* date of birth */}
+                                        <div className="flex flex-col gap-1">
+                                            <span className="text-sm text-gray-600">Year of Establishment</span>
+                                            <input 
+                                                type="text" 
+                                                className="px-4 py-2 rounded-xl border border-[#BCC3D0] w-[232px]"
+                                                placeholder="1987"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* buttons */}
+                                    <div className="flex gap-4 w-[476px]">
+                                        
+                                        <button 
+                                            className="w-full bg-gray-200 border border-gray-300 rounded-xl py-2.5 text-gray-600 mt-4"
+                                            type="button"
+                                            onClick={handlePrevious}
+                                        >
+                                            Previous
+                                        </button>
+
+                                        <button 
+                                            className="w-full bg-[#1F479A] rounded-xl py-2.5 text-white mt-4"
+                                            type="button"
+                                            onClick={handleNext}
+                                        >
+                                            Next
+                                        </button>
+                                    </div>
+
+
+                                </form>
+
+
+                            </div>
+                        </>
                     )
 
                 case 3:
                     return (
-                        <div>
-                            <p>third step</p>
-                            <div className="flex gap-4 w-[476px]">
-                                    
-                                <button 
-                                    className="w-full bg-[#1F479A] rounded-xl py-2.5 text-white mt-4"
-                                    type="button"
-                                    onClick={handlePrevious}
-                                >
-                                    Previous
-                                </button>
-                                <button 
-                                    className="w-full bg-[#1F479A] rounded-xl py-2.5 text-white mt-4"
-                                    type="button"
-                                    onClick={handleNext}
-                                >
-                                    Next
-                                </button>
+                        <>
+                            {/* left side */}
+                            <div
+                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-end`}
+                            >
+                                <div className='flex justify-between items-center'>
+                                    <div className='flex items-center gap-1 -ml-1'>
+                                        <ArrowLeft size={20} color='white'/>
+                                        <Link to={"/"}>
+                                            <p className='text-white'>Back to Home</p>
+                                        </Link>
+                                        
+                                    </div>
+                                    <Link to={"/auth/company-login"}>
+                                        <span className='text-white'>Login?</span>
+                                    </Link>
+                                </div>
+
                             </div>
-                        </div>
-                        
+
+                                
+                            {/* right side */}
+                            <div className="h-full w-full flex flex-col justify-center items-center">
+                                {/* button to switch bw student and company */}
+                                <div className="bg-white w-[476px] rounded-full shadow-lg p-1 flex gap-1">
+                                    <Link to="/auth/student-signup" >
+                                        <div
+                                            className={`w-[232px] py-4 rounded-full justify-center transition-all items-center flex gap-2 duration-500 ease-in-out bg-[#F6F6F6] text-gray-600`}
+                                        >
+                                            <GraduationCap size={24}/>
+                                            <p>I'm a Student</p>
+                                        </div>
+                                    </Link>
+                                    <Link to="/auth/company-signup" >
+                                        <div
+                                            className={`w-[232px] py-4 rounded-full justify-center transition-all items-center flex gap-2 duration-500 ease-in-out bg-[#1F479A] text-white`}
+                                        >
+                                            <Building2 size={20}/>
+                                            <p>I'm a Company</p>
+                                        </div>
+                                    </Link>
+                                </div>
+
+                            
+                                {/* company signup form */}
+                                <form className="mt-8 flex flex-col gap-4">
+
+                                {/* company name and phone number */}
+                                <div className="flex gap-4">
+                                    {/* company name */}
+                                    <div className="flex flex-col gap-1">
+                                        <span className="text-sm text-gray-600">Company Name</span>
+                                        <input 
+                                            type="text" 
+                                            className="px-4 py-2 rounded-xl border border-[#BCC3D0] w-[232px]"
+                                            placeholder="SkillSync"
+                                        />
+                                    </div>
+                                    {/* company phone number */}
+                                    <div className="flex flex-col gap-1">
+                                        <span className="text-sm text-gray-600">Company Phone Number</span>
+                                        <input 
+                                            type="text" 
+                                            className="px-4 py-2 rounded-xl border border-[#BCC3D0] w-[232px]"
+                                            placeholder="+91 1234567890"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* company email */}
+                                <div>
+                                    <div className="flex flex-col gap-1">
+                                        <span className="text-sm text-gray-600">Company Email</span>
+                                        <input 
+                                            type="email" 
+                                            className="px-4 py-2 rounded-xl border border-[#BCC3D0] w-[476px]"
+                                            placeholder="example@skillsyncjob.com"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* password */}
+                                <div className="flex gap-4">
+                                    {/* phone number */}
+                                    <div className="flex flex-col gap-1">
+                                        <span className="text-sm text-gray-600">Password</span>
+                                        <input 
+                                            type="text" 
+                                            className="px-4 py-2 rounded-xl border border-[#BCC3D0] w-[232px]"
+                                            placeholder="••••••••"
+                                        />
+                                    </div>
+                                    {/* date of birth */}
+                                    <div className="flex flex-col gap-1">
+                                        <span className="text-sm text-gray-600">Confirm Password</span>
+                                        <input 
+                                            type="text" 
+                                            className="px-4 py-2 rounded-xl border border-[#BCC3D0] w-[232px]"
+                                            placeholder="••••••••"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* buttons */}
+                                <div className="flex gap-4 w-[476px]">
+                                    
+                                    <button 
+                                        className="w-full bg-[#1F479A] rounded-xl py-2.5 text-white mt-4"
+                                        type="button"
+                                        onClick={handleNext}
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+
+
+                                </form>
+
+
+                            </div>
+                        </>
                     )
             }
         }
