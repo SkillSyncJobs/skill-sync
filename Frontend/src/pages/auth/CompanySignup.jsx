@@ -10,6 +10,8 @@ const CompanySignup = () => {
     const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(false);
     const [step, setStep] = useState(1)
+    const [passwordStrength, setPasswordStrength] = useState(0); // 0 to 100
+    const [passwordFeedback, setPasswordFeedback] = useState('');
     const [formData, setFormData] = useState({
         // step 1
         companyName: '',
@@ -46,6 +48,11 @@ const CompanySignup = () => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
+        if (name === 'password') {
+            const { score, feedback } = checkPasswordStrength(value);
+            setPasswordStrength(score);
+            setPasswordFeedback(feedback);
+        }
         setFormData({
             ...formData,
             [name]: value,
@@ -173,6 +180,35 @@ const CompanySignup = () => {
                     setIsLoading(false); // Stop loading regardless of success/failure
                 }
             }
+        };
+
+        const checkPasswordStrength = (password) => {
+            let score = 0;
+            let feedback = '';
+        
+            // Length check (max 25 points)
+            const lengthScore = Math.min(25, (password.length / 8) * 25);
+            score += lengthScore;
+        
+            // Complexity checks (25 points each)
+            if (/[A-Z]/.test(password)) score += 25; // Uppercase
+            if (/[0-9]/.test(password)) score += 25; // Numbers
+            if (/[!@#$%^&*]/.test(password)) score += 25; // Special characters
+        
+            // Set feedback based on score
+            if (score === 0) {
+                feedback = 'Start typing...';
+            } else if (score <= 25) {
+                feedback = 'Too weak';
+            } else if (score <= 50) {
+                feedback = 'Could be stronger';
+            } else if (score <= 75) {
+                feedback = 'Pretty good';
+            } else {
+                feedback = 'Strong password!';
+            }
+        
+            return { score, feedback };
         };
 
         const jobRoleOptions = [
@@ -349,6 +385,78 @@ const CompanySignup = () => {
                                             placeholder="••••••••"
                                         />
                                     </div>
+                                </div>
+                                <div>
+                                    {formData.password && (
+                                        <div className="mt-2">
+                                            {/* Strength Meter */}
+                                            <div className="relative h-1.5 w-full bg-gray-300 rounded-full overflow-hidden">
+                                                <div 
+                                                    className={`absolute top-0 left-0 h-full transition-all duration-300 rounded-full ${
+                                                        passwordStrength <= 25 ? 'bg-red-500' :
+                                                        passwordStrength <= 50 ? 'bg-orange-500' :
+                                                        passwordStrength <= 75 ? 'bg-yellow-500' :
+                                                        'bg-green-500'
+                                                    }`}
+                                                    style={{ width: `${passwordStrength}%` }}
+                                                />
+                                            </div>
+                                            
+                                            {/* Feedback Message */}
+                                            <div className="flex items-center gap-2 mt-2">
+                                                {passwordStrength > 0 && (
+                                                    <>
+                                                        <div 
+                                                            className={`w-2 h-2 rounded-full ${
+                                                                passwordStrength <= 25 ? 'bg-red-500' :
+                                                                passwordStrength <= 50 ? 'bg-orange-500' :
+                                                                passwordStrength <= 75 ? 'bg-yellow-500' :
+                                                                'bg-green-500'
+                                                            }`} 
+                                                        />
+                                                        <span 
+                                                            className={`text-xs ${
+                                                                passwordStrength <= 25 ? 'text-red-500' :
+                                                                passwordStrength <= 50 ? 'text-orange-500' :
+                                                                passwordStrength <= 75 ? 'text-yellow-500' :
+                                                                'text-green-500'
+                                                            }`}
+                                                        >
+                                                            {passwordFeedback}
+                                                        </span>
+                                                    </>
+                                                )}
+                                            </div>
+
+                                            {/* Requirements (only show if not met) */}
+                                            <div className="grid grid-cols-2 gap-2 mt-2">
+                                                {!formData.password.match(/[A-Z]/) && (
+                                                    <span className="text-xs text-gray-500 flex items-center gap-1">
+                                                        <div className="w-1 h-1 bg-gray-300 rounded-full" />
+                                                        Need uppercase letter
+                                                    </span>
+                                                )}
+                                                {!formData.password.match(/[0-9]/) && (
+                                                    <span className="text-xs text-gray-500 flex items-center gap-1">
+                                                        <div className="w-1 h-1 bg-gray-300 rounded-full" />
+                                                        Need a number
+                                                    </span>
+                                                )}
+                                                {!formData.password.match(/[!@#$%^&*]/) && (
+                                                    <span className="text-xs text-gray-500 flex items-center gap-1">
+                                                        <div className="w-1 h-1 bg-gray-300 rounded-full" />
+                                                        Need special character
+                                                    </span>
+                                                )}
+                                                {formData.password.length < 8 && (
+                                                    <span className="text-xs text-gray-500 flex items-center gap-1">
+                                                        <div className="w-1 h-1 bg-gray-300 rounded-full" />
+                                                        At least 8 characters
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* buttons */}
