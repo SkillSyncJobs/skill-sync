@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom"
-import { ArrowLeft, Briefcase, Building2, CheckCircle2, GraduationCap, Star, X } from "lucide-react";
+import CompanyLogo from '../../assets/logo-dark-blue.svg'
+import { ArrowLeft, Briefcase, Building2, CheckCircle2, Circle, CircleDot, GraduationCap, Star, X } from "lucide-react";
 import Select from 'react-select'
 
 
@@ -12,6 +13,7 @@ const CompanySignup = () => {
     const [step, setStep] = useState(1)
     const [passwordStrength, setPasswordStrength] = useState(0); // 0 to 100
     const [passwordFeedback, setPasswordFeedback] = useState('');
+
     const [formData, setFormData] = useState({
         // step 1
         companyName: '',
@@ -162,6 +164,10 @@ const CompanySignup = () => {
             setStep(prev => Math.max(prev - 1, 1))
         }
 
+        const handleGoToDashboard = () => {
+            navigate("/company/dashboard");
+        }
+
         const handleSubmit = async (e) => {
             e.preventDefault();
             if (validateStep()) {
@@ -172,13 +178,14 @@ const CompanySignup = () => {
                     // Your API call would go here
                     // await axios.post('/api/company/signup', formData);
                     
-                    navigate("/company/dashboard");
                     setStep(7);
                 } catch (error) {
                     toast.error("Registration failed. Please try again.");
                 } finally {
                     setIsLoading(false); // Stop loading regardless of success/failure
                 }
+
+                console.log(formData);
             }
         };
 
@@ -210,6 +217,8 @@ const CompanySignup = () => {
         
             return { score, feedback };
         };
+
+        
 
         const jobRoleOptions = [
             "Content Marketing Specialist",
@@ -272,8 +281,47 @@ const CompanySignup = () => {
                         <>
                             {/* left side */}
                             <div
-                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-end`}
+                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-between`}
                             >
+                                {/* progress indicator */}
+                                <div className="flex justify-center  items-center w-full pt-36 transition-all duration-300 ease-in-out ">
+                                    <div className="flex flex-col justify-center items-start text-sm">
+                                        <div className="h-4 w-[1px] bg-white mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle className="bg-white rounded-full" size={16}/>
+                                            <span className="font-bold">Basic Information</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Company Details</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Point of Contact</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Job Posting Preferences</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Company Logo</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>                                       
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Additional Information</span>
+                                        </div>
+                                        <div className="h-4 w-[1px] bg-white mt-1 ml-[7px]"/>
+
+                                        
+                                    </div>
+                                </div>
+
                                 <div className='flex justify-between items-center'>
                                     <div className='flex items-center gap-1 -ml-1'>
                                         <ArrowLeft size={20} color='white'/>
@@ -292,6 +340,7 @@ const CompanySignup = () => {
                                 
                             {/* right side */}
                             <div className="h-full w-full flex flex-col justify-center items-center">
+                                
                                 {/* button to switch bw student and company */}
                                 <div className="bg-white w-[476px] rounded-full shadow-lg p-1 flex gap-1">
                                     <Link to="/auth/student-signup" >
@@ -485,8 +534,48 @@ const CompanySignup = () => {
                         <>
                             {/* left side */}
                             <div
-                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-end`}
+                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-between`}
                             >
+                                {/* progress indicator */}
+                                <div className="flex justify-center  items-center w-full pt-36 transition-all duration-300 ease-in-out ">
+                                    <div className="flex flex-col justify-center items-start text-sm">
+                                        <div className="h-4 w-[1px] bg-white mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span >Basic Information</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle className="bg-white rounded-full" size={16}/>
+                                            <span className="font-bold">Company Details</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Point of Contact</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Job Posting Preferences</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Company Logo</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>                                       
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Additional Information</span>
+                                        </div>
+                                        <div className="h-4 w-[1px] bg-white mt-1 ml-[7px]"/>
+
+                                        
+                                    </div>
+                                </div>
+
+
                                 <div className='flex justify-between items-center'>
                                     <div className='flex items-center gap-1 -ml-1'>
                                         <ArrowLeft size={20} color='white'/>
@@ -608,8 +697,46 @@ const CompanySignup = () => {
                         <>
                             {/* left side */}
                             <div
-                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-end`}
+                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-between`}
                             >
+                                {/* progress indicator */}
+                                <div className="flex justify-center  items-center w-full pt-36 transition-all duration-300 ease-in-out ">
+                                    <div className="flex flex-col justify-center items-start text-sm">
+                                        <div className="h-4 w-[1px] bg-white mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Basic Information</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Company Details</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle className="bg-white rounded-full" size={16}/>
+                                            <span className="font-bold">Point of Contact</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Job Posting Preferences</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Company Logo</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>                                       
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Additional Information</span>
+                                        </div>
+                                        <div className="h-4 w-[1px] bg-white mt-1 ml-[7px]"/>
+
+                                        
+                                    </div>
+                                </div>
                                 <div className='flex justify-between items-center'>
                                     <div className='flex items-center gap-1 -ml-1'>
                                         <ArrowLeft size={20} color='white'/>
@@ -738,8 +865,46 @@ const CompanySignup = () => {
                         <>
                             {/* left side */}
                             <div
-                                className={`w-[434px] h-full rounded-xl bg-[#1F479A] px-6 py-8 flex flex-col justify-end`}
+                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-between`}
                             >
+                                {/* progress indicator */}
+                                <div className="flex ml-1 justify-center  items-center w-full pt-36 transition-all duration-300 ease-in-out ">
+                                    <div className="flex flex-col justify-center items-start text-sm">
+                                        <div className="h-4 w-[1px] bg-white mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Basic Information</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Company Details</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Point of Contact</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle className="bg-white rounded-full" size={16}/>
+                                            <span className="font-bold">Job Posting Preferences</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Company Logo</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>                                       
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Additional Information</span>
+                                        </div>
+                                        <div className="h-4 w-[1px] bg-white mt-1 ml-[7px]"/>
+
+                                        
+                                    </div>
+                                </div>
                                 <div className='flex justify-between items-center'>
                                     <div className='flex items-center gap-1 -ml-1'>
                                         <ArrowLeft size={20} color='white'/>
@@ -917,8 +1082,46 @@ const CompanySignup = () => {
                         <>
                             {/* left side */}
                             <div
-                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-end`}
+                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-between`}
                             >
+                                {/* progress indicator */}
+                                <div className="flex justify-center  items-center w-full pt-36 transition-all duration-300 ease-in-out ">
+                                    <div className="flex flex-col justify-center items-start text-sm">
+                                        <div className="h-4 w-[1px] bg-white mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Basic Information</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Company Details</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Point of Contact</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Job Posting Preferences</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle className="bg-white rounded-full" size={16}/>
+                                            <span className="font-bold">Company Logo</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>                                       
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Additional Information</span>
+                                        </div>
+                                        <div className="h-4 w-[1px] bg-white mt-1 ml-[7px]"/>
+
+                                        
+                                    </div>
+                                </div>
                                 <div className='flex justify-between items-center'>
                                     <div className='flex items-center gap-1 -ml-1'>
                                         <ArrowLeft size={20} color='white'/>
@@ -1000,8 +1203,46 @@ const CompanySignup = () => {
                         <>
                             {/* left side */}
                             <div
-                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-end`}
+                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-between`}
                             >
+                                {/* progress indicator */}
+                                <div className="flex justify-center  items-center w-full pt-36 transition-all duration-300 ease-in-out ">
+                                    <div className="flex flex-col justify-center items-start text-sm">
+                                        <div className="h-4 w-[1px] bg-white mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Basic Information</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Company Details</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Point of Contact</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Job Posting Preferences</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Company Logo</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>                                       
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle className="bg-white rounded-full" size={16}/>
+                                            <span className="font-bold">Additional Information</span>
+                                        </div>
+                                        <div className="h-4 w-[1px] bg-white mt-1 ml-[7px]"/>
+
+                                        
+                                    </div>
+                                </div>
                                 <div className='flex justify-between items-center'>
                                     <div className='flex items-center gap-1 -ml-1'>
                                         <ArrowLeft size={20} color='white'/>
@@ -1069,9 +1310,17 @@ const CompanySignup = () => {
                                         <button 
                                             className="w-full bg-[#1F479A] rounded-xl py-2.5 text-white mt-4"
                                             type="button"
-                                            onClick={handleNext}
+                                            onClick={handleSubmit}
+                                            disabled={isLoading}
                                         >
-                                            Next
+                                            {isLoading ? (
+                                                <div className="flex items-center justify-center gap-2">
+                                                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                                    Submitting...
+                                                </div>
+                                            ) : (
+                                                "Submit"
+                                            )}
                                         </button>
                                     </div>
 
@@ -1088,8 +1337,46 @@ const CompanySignup = () => {
                     <>
                         {/* left side */}
                         <div
-                            className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-end`}
-                        >
+                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-between`}
+                            >
+                                {/* progress indicator */}
+                                <div className="flex justify-center  items-center w-full pt-36 transition-all duration-300 ease-in-out ">
+                                    <div className="flex flex-col justify-center items-start text-sm">
+                                        <div className="h-4 w-[1px] bg-white mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle className="bg-white rounded-full" size={16}/>
+                                            <span>Basic Information</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle className="bg-white rounded-full" size={16}/>
+                                            <span>Company Details</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle className="bg-white rounded-full" size={16}/>
+                                            <span>Point of Contact</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle className="bg-white rounded-full" size={16}/>
+                                            <span>Job Posting Preferences</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle className="bg-white rounded-full" size={16}/>
+                                            <span>Company Logo</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>                                       
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle className="bg-white rounded-full" size={16}/>
+                                            <span>Additional Information</span>
+                                        </div>
+                                        <div className="h-4 w-[1px] bg-white mt-1 ml-[7px]"/>
+
+                                        
+                                    </div>
+                                </div>
                             <div className='flex justify-between items-center'>
                                 <div className='flex items-center gap-1 -ml-1'>
                                     <ArrowLeft size={20} color='white'/>
@@ -1123,28 +1410,14 @@ const CompanySignup = () => {
                                 <div className="flex gap-4 w-[476px]">
                                     
                                     <button 
-                                        className="w-full bg-gray-200 border border-gray-300 rounded-xl py-2.5 text-gray-600 mt-4"
+                                        className="w-full bg-[#1F479A] border rounded-xl py-2.5 text-white mt-4"
                                         type="button"
-                                        onClick={handlePrevious}
+                                        onClick={handleGoToDashboard}
                                     >
-                                        Previous
+                                        Go to Dashboard
                                     </button>
 
-                                    <button 
-                                        className="w-full bg-[#1F479A] rounded-xl py-2.5 text-white mt-4"
-                                        type="button"
-                                        onClick={handleSubmit}
-                                        disabled={isLoading}
-                                    >
-                                        {isLoading ? (
-                                            <div className="flex items-center justify-center gap-2">
-                                                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                                Submitting...
-                                            </div>
-                                        ) : (
-                                            "Submit"
-                                        )}
-                                    </button>
+
                                 </div>
 
 
@@ -1161,10 +1434,11 @@ const CompanySignup = () => {
             }
         }
 
-        console.log(formData);
+
 
     return (
         <div className="h-screen w-screen bg-[#EFF6FF] p-3 flex">
+            
             
             {renderStep()}
             
