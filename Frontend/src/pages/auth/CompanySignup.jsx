@@ -8,6 +8,7 @@ import Select from 'react-select'
 
 const CompanySignup = () => {
     const navigate = useNavigate()
+    const [isLoading, setIsLoading] = useState(false);
     const [step, setStep] = useState(1)
     const [formData, setFormData] = useState({
         // step 1
@@ -62,6 +63,11 @@ const CompanySignup = () => {
                         toast.error("Please fill all required fields");
                         return false;
                     }
+                    const phoneRegex = /^\+?[1-9]\d{9,11}$/;
+                    if (!phoneRegex.test(formData.companyPhoneNumber)) {
+                        toast.error("Please enter a valid phone number");
+                        return false;
+                    }
                     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                     if (formData.companyEmail && !emailRegex.test(formData.companyEmail)) {
                         toast.error("Please enter a valid email address");
@@ -92,16 +98,26 @@ const CompanySignup = () => {
                         toast.error("Please fill all point of contact details");
                         return false;
                     }
-                    return true;
-                } 
-                case 4: {
-                    if (!formData.jobRoles || 
-                        !formData.areasOfExpertiseSought) {
-                        toast.error("Please specify job roles and areas of expertise");
+                    const phoneRegex = /^\+?[1-9]\d{9,11}$/;
+                    if (!phoneRegex.test(formData.companyPhoneNumber)) {
+                        toast.error("Please enter a valid phone number");
+                        return false;
+                    }
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(formData.pointOfContactEmail)) {
+                        toast.error("Please enter a valid email address for point of contact");
                         return false;
                     }
                     return true;
                 } 
+                case 4: {
+                    if (!Object.keys(formData.jobRoles).length || 
+                        !Object.keys(formData.areasOfExpertiseSought).length) {
+                        toast.error("Please select at least one job role and expertise area");
+                        return false;
+                    }
+                    return true;
+                }
                 case 5: {
                     if (!formData.companyLogo) {
                         toast.error("Please upload company logo");
@@ -110,13 +126,18 @@ const CompanySignup = () => {
                     return true;
                 } 
                 case 6: {
-                    if (!formData.companyWebsite || 
-                        !formData.linkedInProfile) {
+                    if (!formData.companyWebsite || !formData.linkedInProfile) {
                         toast.error("Please provide company website and LinkedIn profile");
                         return false;
                     }
+                    // Add URL validation
+                    const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/.*)*\/?$/;
+                    if (!urlRegex.test(formData.companyWebsite)) {
+                        toast.error("Please enter a valid website URL");
+                        return false;
+                    }
                     return true;
-                } 
+                }
                 default: {
                     return true;
                 }
@@ -134,15 +155,25 @@ const CompanySignup = () => {
             setStep(prev => Math.max(prev - 1, 1))
         }
 
-        const handleSubmit = (e) => {
-            e.preventDefault()
-            if(validateStep()) {
-                // handle form submission here
-                console.log('form submitted: ', formData);
-                navigate("/company/dashboard")
-                setStep(7) // move to success step   
+        const handleSubmit = async (e) => {
+            e.preventDefault();
+            if (validateStep()) {
+                try {
+                    setIsLoading(true); // Start loading
+                    // Simulate API call
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    // Your API call would go here
+                    // await axios.post('/api/company/signup', formData);
+                    
+                    navigate("/company/dashboard");
+                    setStep(7);
+                } catch (error) {
+                    toast.error("Registration failed. Please try again.");
+                } finally {
+                    setIsLoading(false); // Stop loading regardless of success/failure
+                }
             }
-        }
+        };
 
         const jobRoleOptions = [
             "Content Marketing Specialist",
@@ -175,6 +206,12 @@ const CompanySignup = () => {
         // Add this function to handle image upload
         const handleImageUpload = (e) => {
             const file = e.target.files[0];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+    
+            if (file.size > maxSize) {
+                toast.error("Image size should be less than 5MB");
+                return;
+            }
             if (file) {
                 // Update formData with the file
                 setFormData({
@@ -989,8 +1026,16 @@ const CompanySignup = () => {
                                         className="w-full bg-[#1F479A] rounded-xl py-2.5 text-white mt-4"
                                         type="button"
                                         onClick={handleSubmit}
+                                        disabled={isLoading}
                                     >
-                                        Submit
+                                        {isLoading ? (
+                                            <div className="flex items-center justify-center gap-2">
+                                                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                                Submitting...
+                                            </div>
+                                        ) : (
+                                            "Submit"
+                                        )}
                                     </button>
                                 </div>
 
