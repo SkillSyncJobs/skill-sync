@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom"
-import { ArrowLeft, Briefcase, Building2, GraduationCap, Star, X } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom"
+import { ArrowLeft, Briefcase, Building2, CheckCircle2, GraduationCap, Star, X } from "lucide-react";
 import Select from 'react-select'
 
 
 const CompanySignup = () => {
+    const navigate = useNavigate()
     const [step, setStep] = useState(1)
     const [formData, setFormData] = useState({
         // step 1
@@ -138,6 +139,7 @@ const CompanySignup = () => {
             if(validateStep()) {
                 // handle form submission here
                 console.log('form submitted: ', formData);
+                navigate("/company/dashboard")
                 setStep(7) // move to success step   
             }
         }
@@ -935,7 +937,74 @@ const CompanySignup = () => {
                             </div>
                         </>
                     )
+                
+                case 7: 
+                return (
+                    <>
+                        {/* left side */}
+                        <div
+                            className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-end`}
+                        >
+                            <div className='flex justify-between items-center'>
+                                <div className='flex items-center gap-1 -ml-1'>
+                                    <ArrowLeft size={20} color='white'/>
+                                    <Link to={"/"}>
+                                        <p className='text-white'>Back to Home</p>
+                                    </Link>
+                                    
+                                </div>
+                                <Link to={"/auth/company-login"}>
+                                    <span className='text-white'>Login?</span>
+                                </Link>
+                            </div>
 
+                        </div>
+
+                            
+                        {/* right side */}
+                        <div className="h-full w-full flex flex-col justify-center items-center">
+
+                        
+                            {/* company signup form */}
+                            <form className="mt-8 flex flex-col gap-4">
+
+                                <div className="max-w-[476px] p-6 flex flex-col text-center py-12 items-center justify-center bg-white rounded-xl border border-gray-300">
+                                    <CheckCircle2 className="w-16 h-16 mx-auto mb-4 text-green-500" />
+                                    <h3 className="text-xl font-semibold mb-2">Registration Complete!</h3>
+                                    <p>Thank you for signing up. You can now log in to your account.</p>
+                                </div>  
+
+                                {/* buttons */}
+                                <div className="flex gap-4 w-[476px]">
+                                    
+                                    <button 
+                                        className="w-full bg-gray-200 border border-gray-300 rounded-xl py-2.5 text-gray-600 mt-4"
+                                        type="button"
+                                        onClick={handlePrevious}
+                                    >
+                                        Previous
+                                    </button>
+
+                                    <button 
+                                        className="w-full bg-[#1F479A] rounded-xl py-2.5 text-white mt-4"
+                                        type="button"
+                                        onClick={handleSubmit}
+                                    >
+                                        Submit
+                                    </button>
+                                </div>
+
+
+                            </form>
+
+
+                        </div>
+                    </>
+                )
+
+
+                default:
+                    return null
             }
         }
 
