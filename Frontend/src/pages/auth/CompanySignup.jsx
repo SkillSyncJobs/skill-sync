@@ -2,13 +2,18 @@ import React, { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom"
-import { ArrowLeft, Briefcase, Building2, CheckCircle2, GraduationCap, Star, X } from "lucide-react";
+import CompanyLogo from '../../assets/logo-dark-blue.svg'
+import { ArrowLeft, Briefcase, Building2, CheckCircle2, Circle, CircleDot, GraduationCap, Star, X } from "lucide-react";
 import Select from 'react-select'
 
 
 const CompanySignup = () => {
     const navigate = useNavigate()
+    const [isLoading, setIsLoading] = useState(false);
     const [step, setStep] = useState(1)
+    const [passwordStrength, setPasswordStrength] = useState(0); // 0 to 100
+    const [passwordFeedback, setPasswordFeedback] = useState('');
+
     const [formData, setFormData] = useState({
         // step 1
         companyName: '',
@@ -45,6 +50,11 @@ const CompanySignup = () => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
+        if (name === 'password') {
+            const { score, feedback } = checkPasswordStrength(value);
+            setPasswordStrength(score);
+            setPasswordFeedback(feedback);
+        }
         setFormData({
             ...formData,
             [name]: value,
@@ -60,6 +70,11 @@ const CompanySignup = () => {
                         !formData.password || 
                         !formData.confirmPassword) {
                         toast.error("Please fill all required fields");
+                        return false;
+                    }
+                    const phoneRegex = /^\+?[1-9]\d{9,11}$/;
+                    if (!phoneRegex.test(formData.companyPhoneNumber)) {
+                        toast.error("Please enter a valid phone number");
                         return false;
                     }
                     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -92,16 +107,26 @@ const CompanySignup = () => {
                         toast.error("Please fill all point of contact details");
                         return false;
                     }
-                    return true;
-                } 
-                case 4: {
-                    if (!formData.jobRoles || 
-                        !formData.areasOfExpertiseSought) {
-                        toast.error("Please specify job roles and areas of expertise");
+                    const phoneRegex = /^\+?[1-9]\d{9,11}$/;
+                    if (!phoneRegex.test(formData.companyPhoneNumber)) {
+                        toast.error("Please enter a valid phone number");
+                        return false;
+                    }
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(formData.pointOfContactEmail)) {
+                        toast.error("Please enter a valid email address for point of contact");
                         return false;
                     }
                     return true;
                 } 
+                case 4: {
+                    if (!Object.keys(formData.jobRoles).length || 
+                        !Object.keys(formData.areasOfExpertiseSought).length) {
+                        toast.error("Please select at least one job role and expertise area");
+                        return false;
+                    }
+                    return true;
+                }
                 case 5: {
                     if (!formData.companyLogo) {
                         toast.error("Please upload company logo");
@@ -110,13 +135,18 @@ const CompanySignup = () => {
                     return true;
                 } 
                 case 6: {
-                    if (!formData.companyWebsite || 
-                        !formData.linkedInProfile) {
+                    if (!formData.companyWebsite || !formData.linkedInProfile) {
                         toast.error("Please provide company website and LinkedIn profile");
                         return false;
                     }
+                    // Add URL validation
+                    const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/.*)*\/?$/;
+                    if (!urlRegex.test(formData.companyWebsite)) {
+                        toast.error("Please enter a valid website URL");
+                        return false;
+                    }
                     return true;
-                } 
+                }
                 default: {
                     return true;
                 }
@@ -134,15 +164,61 @@ const CompanySignup = () => {
             setStep(prev => Math.max(prev - 1, 1))
         }
 
-        const handleSubmit = (e) => {
-            e.preventDefault()
-            if(validateStep()) {
-                // handle form submission here
-                console.log('form submitted: ', formData);
-                navigate("/company/dashboard")
-                setStep(7) // move to success step   
-            }
+        const handleGoToDashboard = () => {
+            navigate("/company/dashboard");
         }
+
+        const handleSubmit = async (e) => {
+            e.preventDefault();
+            if (validateStep()) {
+                try {
+                    setIsLoading(true); // Start loading
+                    // Simulate API call
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    // Your API call would go here
+                    // await axios.post('/api/company/signup', formData);
+                    
+                    setStep(7);
+                } catch (error) {
+                    toast.error("Registration failed. Please try again.");
+                } finally {
+                    setIsLoading(false); // Stop loading regardless of success/failure
+                }
+
+                console.log(formData);
+            }
+        };
+
+        const checkPasswordStrength = (password) => {
+            let score = 0;
+            let feedback = '';
+        
+            // Length check (max 25 points)
+            const lengthScore = Math.min(25, (password.length / 8) * 25);
+            score += lengthScore;
+        
+            // Complexity checks (25 points each)
+            if (/[A-Z]/.test(password)) score += 25; // Uppercase
+            if (/[0-9]/.test(password)) score += 25; // Numbers
+            if (/[!@#$%^&*]/.test(password)) score += 25; // Special characters
+        
+            // Set feedback based on score
+            if (score === 0) {
+                feedback = 'Start typing...';
+            } else if (score <= 25) {
+                feedback = 'Too weak';
+            } else if (score <= 50) {
+                feedback = 'Could be stronger';
+            } else if (score <= 75) {
+                feedback = 'Pretty good';
+            } else {
+                feedback = 'Strong password!';
+            }
+        
+            return { score, feedback };
+        };
+
+        
 
         const jobRoleOptions = [
             "Content Marketing Specialist",
@@ -175,6 +251,12 @@ const CompanySignup = () => {
         // Add this function to handle image upload
         const handleImageUpload = (e) => {
             const file = e.target.files[0];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+    
+            if (file.size > maxSize) {
+                toast.error("Image size should be less than 5MB");
+                return;
+            }
             if (file) {
                 // Update formData with the file
                 setFormData({
@@ -199,8 +281,47 @@ const CompanySignup = () => {
                         <>
                             {/* left side */}
                             <div
-                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-end`}
+                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-between`}
                             >
+                                {/* progress indicator */}
+                                <div className="flex justify-center  items-center w-full pt-36 transition-all duration-300 ease-in-out ">
+                                    <div className="flex flex-col justify-center items-start text-sm">
+                                        <div className="h-4 w-[1px] bg-white mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle className="bg-white rounded-full" size={16}/>
+                                            <span className="font-bold">Basic Information</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Company Details</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Point of Contact</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Job Posting Preferences</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Company Logo</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>                                       
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Additional Information</span>
+                                        </div>
+                                        <div className="h-4 w-[1px] bg-white mt-1 ml-[7px]"/>
+
+                                        
+                                    </div>
+                                </div>
+
                                 <div className='flex justify-between items-center'>
                                     <div className='flex items-center gap-1 -ml-1'>
                                         <ArrowLeft size={20} color='white'/>
@@ -219,6 +340,7 @@ const CompanySignup = () => {
                                 
                             {/* right side */}
                             <div className="h-full w-full flex flex-col justify-center items-center">
+                                
                                 {/* button to switch bw student and company */}
                                 <div className="bg-white w-[476px] rounded-full shadow-lg p-1 flex gap-1">
                                     <Link to="/auth/student-signup" >
@@ -313,6 +435,78 @@ const CompanySignup = () => {
                                         />
                                     </div>
                                 </div>
+                                <div>
+                                    {formData.password && (
+                                        <div className="mt-2">
+                                            {/* Strength Meter */}
+                                            <div className="relative h-1.5 w-full bg-gray-300 rounded-full overflow-hidden">
+                                                <div 
+                                                    className={`absolute top-0 left-0 h-full transition-all duration-300 rounded-full ${
+                                                        passwordStrength <= 25 ? 'bg-red-500' :
+                                                        passwordStrength <= 50 ? 'bg-orange-500' :
+                                                        passwordStrength <= 75 ? 'bg-yellow-500' :
+                                                        'bg-green-500'
+                                                    }`}
+                                                    style={{ width: `${passwordStrength}%` }}
+                                                />
+                                            </div>
+                                            
+                                            {/* Feedback Message */}
+                                            <div className="flex items-center gap-2 mt-2">
+                                                {passwordStrength > 0 && (
+                                                    <>
+                                                        <div 
+                                                            className={`w-2 h-2 rounded-full ${
+                                                                passwordStrength <= 25 ? 'bg-red-500' :
+                                                                passwordStrength <= 50 ? 'bg-orange-500' :
+                                                                passwordStrength <= 75 ? 'bg-yellow-500' :
+                                                                'bg-green-500'
+                                                            }`} 
+                                                        />
+                                                        <span 
+                                                            className={`text-xs ${
+                                                                passwordStrength <= 25 ? 'text-red-500' :
+                                                                passwordStrength <= 50 ? 'text-orange-500' :
+                                                                passwordStrength <= 75 ? 'text-yellow-500' :
+                                                                'text-green-500'
+                                                            }`}
+                                                        >
+                                                            {passwordFeedback}
+                                                        </span>
+                                                    </>
+                                                )}
+                                            </div>
+
+                                            {/* Requirements (only show if not met) */}
+                                            <div className="grid grid-cols-2 gap-2 mt-2">
+                                                {!formData.password.match(/[A-Z]/) && (
+                                                    <span className="text-xs text-gray-500 flex items-center gap-1">
+                                                        <div className="w-1 h-1 bg-gray-300 rounded-full" />
+                                                        Need uppercase letter
+                                                    </span>
+                                                )}
+                                                {!formData.password.match(/[0-9]/) && (
+                                                    <span className="text-xs text-gray-500 flex items-center gap-1">
+                                                        <div className="w-1 h-1 bg-gray-300 rounded-full" />
+                                                        Need a number
+                                                    </span>
+                                                )}
+                                                {!formData.password.match(/[!@#$%^&*]/) && (
+                                                    <span className="text-xs text-gray-500 flex items-center gap-1">
+                                                        <div className="w-1 h-1 bg-gray-300 rounded-full" />
+                                                        Need special character
+                                                    </span>
+                                                )}
+                                                {formData.password.length < 8 && (
+                                                    <span className="text-xs text-gray-500 flex items-center gap-1">
+                                                        <div className="w-1 h-1 bg-gray-300 rounded-full" />
+                                                        At least 8 characters
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
 
                                 {/* buttons */}
                                 <div className="flex gap-4 w-[476px]">
@@ -340,8 +534,48 @@ const CompanySignup = () => {
                         <>
                             {/* left side */}
                             <div
-                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-end`}
+                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-between`}
                             >
+                                {/* progress indicator */}
+                                <div className="flex justify-center  items-center w-full pt-36 transition-all duration-300 ease-in-out ">
+                                    <div className="flex flex-col justify-center items-start text-sm">
+                                        <div className="h-4 w-[1px] bg-white mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span >Basic Information</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle className="bg-white rounded-full" size={16}/>
+                                            <span className="font-bold">Company Details</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Point of Contact</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Job Posting Preferences</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Company Logo</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>                                       
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Additional Information</span>
+                                        </div>
+                                        <div className="h-4 w-[1px] bg-white mt-1 ml-[7px]"/>
+
+                                        
+                                    </div>
+                                </div>
+
+
                                 <div className='flex justify-between items-center'>
                                     <div className='flex items-center gap-1 -ml-1'>
                                         <ArrowLeft size={20} color='white'/>
@@ -463,8 +697,46 @@ const CompanySignup = () => {
                         <>
                             {/* left side */}
                             <div
-                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-end`}
+                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-between`}
                             >
+                                {/* progress indicator */}
+                                <div className="flex justify-center  items-center w-full pt-36 transition-all duration-300 ease-in-out ">
+                                    <div className="flex flex-col justify-center items-start text-sm">
+                                        <div className="h-4 w-[1px] bg-white mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Basic Information</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Company Details</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle className="bg-white rounded-full" size={16}/>
+                                            <span className="font-bold">Point of Contact</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Job Posting Preferences</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Company Logo</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>                                       
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Additional Information</span>
+                                        </div>
+                                        <div className="h-4 w-[1px] bg-white mt-1 ml-[7px]"/>
+
+                                        
+                                    </div>
+                                </div>
                                 <div className='flex justify-between items-center'>
                                     <div className='flex items-center gap-1 -ml-1'>
                                         <ArrowLeft size={20} color='white'/>
@@ -593,8 +865,46 @@ const CompanySignup = () => {
                         <>
                             {/* left side */}
                             <div
-                                className={`w-[434px] h-full rounded-xl bg-[#1F479A] px-6 py-8 flex flex-col justify-end`}
+                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-between`}
                             >
+                                {/* progress indicator */}
+                                <div className="flex ml-1 justify-center  items-center w-full pt-36 transition-all duration-300 ease-in-out ">
+                                    <div className="flex flex-col justify-center items-start text-sm">
+                                        <div className="h-4 w-[1px] bg-white mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Basic Information</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Company Details</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Point of Contact</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle className="bg-white rounded-full" size={16}/>
+                                            <span className="font-bold">Job Posting Preferences</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Company Logo</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>                                       
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Additional Information</span>
+                                        </div>
+                                        <div className="h-4 w-[1px] bg-white mt-1 ml-[7px]"/>
+
+                                        
+                                    </div>
+                                </div>
                                 <div className='flex justify-between items-center'>
                                     <div className='flex items-center gap-1 -ml-1'>
                                         <ArrowLeft size={20} color='white'/>
@@ -772,8 +1082,46 @@ const CompanySignup = () => {
                         <>
                             {/* left side */}
                             <div
-                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-end`}
+                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-between`}
                             >
+                                {/* progress indicator */}
+                                <div className="flex justify-center  items-center w-full pt-36 transition-all duration-300 ease-in-out ">
+                                    <div className="flex flex-col justify-center items-start text-sm">
+                                        <div className="h-4 w-[1px] bg-white mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Basic Information</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Company Details</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Point of Contact</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Job Posting Preferences</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle className="bg-white rounded-full" size={16}/>
+                                            <span className="font-bold">Company Logo</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>                                       
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Additional Information</span>
+                                        </div>
+                                        <div className="h-4 w-[1px] bg-white mt-1 ml-[7px]"/>
+
+                                        
+                                    </div>
+                                </div>
                                 <div className='flex justify-between items-center'>
                                     <div className='flex items-center gap-1 -ml-1'>
                                         <ArrowLeft size={20} color='white'/>
@@ -855,8 +1203,46 @@ const CompanySignup = () => {
                         <>
                             {/* left side */}
                             <div
-                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-end`}
+                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-between`}
                             >
+                                {/* progress indicator */}
+                                <div className="flex justify-center  items-center w-full pt-36 transition-all duration-300 ease-in-out ">
+                                    <div className="flex flex-col justify-center items-start text-sm">
+                                        <div className="h-4 w-[1px] bg-white mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Basic Information</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Company Details</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Point of Contact</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Job Posting Preferences</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle size={16}/>
+                                            <span>Company Logo</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>                                       
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle className="bg-white rounded-full" size={16}/>
+                                            <span className="font-bold">Additional Information</span>
+                                        </div>
+                                        <div className="h-4 w-[1px] bg-white mt-1 ml-[7px]"/>
+
+                                        
+                                    </div>
+                                </div>
                                 <div className='flex justify-between items-center'>
                                     <div className='flex items-center gap-1 -ml-1'>
                                         <ArrowLeft size={20} color='white'/>
@@ -924,9 +1310,17 @@ const CompanySignup = () => {
                                         <button 
                                             className="w-full bg-[#1F479A] rounded-xl py-2.5 text-white mt-4"
                                             type="button"
-                                            onClick={handleNext}
+                                            onClick={handleSubmit}
+                                            disabled={isLoading}
                                         >
-                                            Next
+                                            {isLoading ? (
+                                                <div className="flex items-center justify-center gap-2">
+                                                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                                    Submitting...
+                                                </div>
+                                            ) : (
+                                                "Submit"
+                                            )}
                                         </button>
                                     </div>
 
@@ -943,8 +1337,46 @@ const CompanySignup = () => {
                     <>
                         {/* left side */}
                         <div
-                            className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-end`}
-                        >
+                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-between`}
+                            >
+                                {/* progress indicator */}
+                                <div className="flex justify-center  items-center w-full pt-36 transition-all duration-300 ease-in-out ">
+                                    <div className="flex flex-col justify-center items-start text-sm">
+                                        <div className="h-4 w-[1px] bg-white mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle className="bg-white rounded-full" size={16}/>
+                                            <span>Basic Information</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle className="bg-white rounded-full" size={16}/>
+                                            <span>Company Details</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle className="bg-white rounded-full" size={16}/>
+                                            <span>Point of Contact</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle className="bg-white rounded-full" size={16}/>
+                                            <span>Job Posting Preferences</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle className="bg-white rounded-full" size={16}/>
+                                            <span>Company Logo</span>
+                                        </div>
+                                        <div className="h-7 w-[1px] bg-white mt-1 mb-1 ml-[7px]"/>                                       
+                                        <div className="flex gap-2 items-center text-white hover:scale-[1.01]">
+                                            <Circle className="bg-white rounded-full" size={16}/>
+                                            <span>Additional Information</span>
+                                        </div>
+                                        <div className="h-4 w-[1px] bg-white mt-1 ml-[7px]"/>
+
+                                        
+                                    </div>
+                                </div>
                             <div className='flex justify-between items-center'>
                                 <div className='flex items-center gap-1 -ml-1'>
                                     <ArrowLeft size={20} color='white'/>
@@ -978,20 +1410,14 @@ const CompanySignup = () => {
                                 <div className="flex gap-4 w-[476px]">
                                     
                                     <button 
-                                        className="w-full bg-gray-200 border border-gray-300 rounded-xl py-2.5 text-gray-600 mt-4"
+                                        className="w-full bg-[#1F479A] border rounded-xl py-2.5 text-white mt-4"
                                         type="button"
-                                        onClick={handlePrevious}
+                                        onClick={handleGoToDashboard}
                                     >
-                                        Previous
+                                        Go to Dashboard
                                     </button>
 
-                                    <button 
-                                        className="w-full bg-[#1F479A] rounded-xl py-2.5 text-white mt-4"
-                                        type="button"
-                                        onClick={handleSubmit}
-                                    >
-                                        Submit
-                                    </button>
+
                                 </div>
 
 
@@ -1008,10 +1434,11 @@ const CompanySignup = () => {
             }
         }
 
-        console.log(formData);
+
 
     return (
         <div className="h-screen w-screen bg-[#EFF6FF] p-3 flex">
+            
             
             {renderStep()}
             
