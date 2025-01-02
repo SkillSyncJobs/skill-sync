@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom"
-import { ArrowLeft, Building2, GraduationCap } from "lucide-react";
+import { ArrowLeft, Briefcase, Building2, GraduationCap, Star, X } from "lucide-react";
 import Select from 'react-select'
 
 
@@ -141,6 +141,32 @@ const CompanySignup = () => {
                 setStep(7) // move to success step   
             }
         }
+
+        const jobRoleOptions = [
+            "Content Marketing Specialist",
+            "SEO/SEM Specialist",
+            "Social Media Manager",
+            "Email Marketing Specialist",
+            "Brand Strategist",
+            "Market Research Analyst",
+            "Data Analyst",
+            "Project Coordinator",
+            "Operations Analyst",
+            "Product Manager"
+        ];
+        
+        const expertiseOptions = [
+            "Search Engine Optimization (SEO)",
+            "Search Engine Marketing (SEM)",
+            "Social Media Strategy and Analytics",
+            "Content Creation and Copywriting",
+            "Email Marketing Automation",
+            "Market Research and Consumer Behavior Analysis",
+            "Data Analysis and Visualization",
+            "Project Management and Workflow Optimization",
+            "Brand Development and Positioning",
+            "KPI Tracking and Performance Metrics"
+        ];
         
         const renderStep = () => {
             switch (step) {
@@ -540,12 +566,11 @@ const CompanySignup = () => {
 
                 // job posting preferences
                 case 4:
-
                     return (
                         <>
                             {/* left side */}
                             <div
-                                className={`w-[434px] h-full rounded-xl  bg-[#1F479A] px-6 py-8 flex flex-col justify-end`}
+                                className={`w-[434px] h-full rounded-xl bg-[#1F479A] px-6 py-8 flex flex-col justify-end`}
                             >
                                 <div className='flex justify-between items-center'>
                                     <div className='flex items-center gap-1 -ml-1'>
@@ -553,84 +578,167 @@ const CompanySignup = () => {
                                         <Link to={"/"}>
                                             <p className='text-white'>Back to Home</p>
                                         </Link>
-                                        
                                     </div>
                                     <Link to={"/auth/company-login"}>
                                         <span className='text-white'>Login?</span>
                                     </Link>
                                 </div>
-
                             </div>
-
-                                
+                
                             {/* right side */}
                             <div className="h-full w-full flex flex-col justify-center items-center">
-
-                            
-                                {/* company signup form */}
-                                <form className="mt-8 flex flex-col gap-4">
-
-                                    {/* industry type */}
-                                    <div className="flex flex-col gap-1">
-                                        <label className="text-sm text-gray-600">Industry Type</label>
-                                        <select
-                                            className="px-4 py-2 rounded-xl border border-[#BCC3D0] w-[476px]"
-                                            name="industryType"
-                                            value={formData.industryType}
-                                            onChange={handleInputChange}
-                                        >
-                                            <option value="" disabled>
-                                                Select Industry Type
-                                            </option>
-                                            <option value="logistics">Logistics</option>
-                                            <option value="food-delivery">Food Delivery</option>
-                                            <option value="tech">Tech</option>
-                                        </select>
-                                    </div>
-
-                                    {/* headquarter location */}
-                                    <div className="flex flex-col gap-1">
-                                        <label className="text-sm text-gray-600">Where is your Headquarter Located?</label>
-                                        <select
-                                            className="px-4 py-2 rounded-xl border border-[#BCC3D0] w-[476px]"
-                                            name="headquarterLocation"
-                                            value={formData.headquarterLocation}
-                                            onChange={handleInputChange}
-                                        >
-                                            <option value="" disabled>
-                                                Select Location
-                                            </option>
-                                            <option value="gurugram">Gurugram</option>
-                                            <option value="bengaluru">Bengaluru</option>
-                                            <option value="delhi">Delhi</option>
-                                        </select>
-                                    </div>
-
-
-                                    {/* buttons */}
-                                    <div className="flex gap-4 w-[476px]">
+                                <div className="w-[476px]">
+                                    <h1 className="text-2xl font-bold text-[#1F479A] mb-8">
+                                        Job Posting Preferences
+                                    </h1>
+                                    
+                                    {/* job roles section */}
+                                    <div className="bg-white rounded-xl border border-gray-300 py-2 mb-6">
+                                        <div className="px-4">
+                                            <h2 className="text-lg text-gray-800 font-semibold mb-2">
+                                                Typical Roles/ Position Hiring For
+                                            </h2>
+                                        </div>
                                         
+                                        {/* display selected job roles */}
+                                        <div className="grid grid-cols-2 text-sm mb-4">
+                                            {formData.jobRoles && Object.keys(formData.jobRoles).map((role) => (
+                                                <div 
+                                                    key={role} 
+                                                    className="flex items-center gap-2 p-3 shadow-[1px_1px_0_0_#d1d5db,0_-1px_0_0_#d1d5db,-1px_0_0_0_transparent] "
+                                                >
+                                                    <Briefcase className="w-5 h-5 text-[#1F479A]" />
+                                                    <span className="flex-1">{role}</span>
+                                                    <button 
+                                                        onClick={() => {
+                                                            const updatedRoles = { ...formData.jobRoles };
+                                                            delete updatedRoles[role];
+                                                            setFormData({
+                                                                ...formData,
+                                                                jobRoles: updatedRoles
+                                                            });
+                                                        }}
+                                                        className="text-gray-400 hover:text-gray-600"
+                                                    >
+                                                        <X className="w-5 h-5" />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                
+                                        {/* Add new job role */}
+                                        <div className="relative px-4 mb-2">
+                                            <select 
+                                                onChange={(e) => {
+                                                    if (e.target.value) {
+                                                        setFormData({
+                                                            ...formData,
+                                                            jobRoles: {
+                                                                ...formData.jobRoles,
+                                                                [e.target.value]: true
+                                                            }
+                                                        });
+                                                    }
+                                                }}
+                                                value=""
+                                                className="p-3 border rounded-xl w-full appearance-none cursor-pointer bg-gray-50"
+                                            >
+                                                <option value="" disabled>+ Add Job Role</option>
+                                                {jobRoleOptions
+                                                    .filter(option => !formData.jobRoles?.[option])
+                                                    .map((option) => (
+                                                        <option key={option} value={option}>
+                                                            {option}
+                                                        </option>
+                                                    ))
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                
+                                    {/* Expertise Section */}
+                                    <div className="bg-white rounded-xl border border-gray-300 py-2">
+                                        <div className="px-4">
+                                            <h2 className="text-lg text-gray-800 font-semibold mb-2">
+                                                Areas of Expertise Sought
+                                            </h2>
+                                        </div>
+                                        
+                                        {/* Display selected expertise */}
+                                        <div className="grid grid-cols-2 text-sm mb-4">
+                                            {formData.areasOfExpertiseSought && Object.keys(formData.areasOfExpertiseSought).map((exp) => (
+                                                <div 
+                                                    key={exp} 
+                                                    className="flex items-center gap-2 p-3 shadow-[1px_1px_0_0_#d1d5db,0_-1px_0_0_#d1d5db,-1px_0_0_0_transparent]"
+                                                >
+                                                    <Star className="w-5 h-5 text-[#1F479A]" />
+                                                    <span className="flex-1">{exp}</span>
+                                                    <button 
+                                                        onClick={() => {
+                                                            const updatedExpertise = { ...formData.areasOfExpertiseSought };
+                                                            delete updatedExpertise[exp];
+                                                            setFormData({
+                                                                ...formData,
+                                                                areasOfExpertiseSought: updatedExpertise
+                                                            });
+                                                        }}
+                                                        className="text-gray-400 hover:text-gray-600"
+                                                    >
+                                                        <X className="w-5 h-5" />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                
+                                        {/* Add new expertise */}
+                                        <div className="relative px-4 mb-2">
+                                            <select 
+                                                onChange={(e) => {
+                                                    if (e.target.value) {
+                                                        setFormData({
+                                                            ...formData,
+                                                            areasOfExpertiseSought: {
+                                                                ...formData.areasOfExpertiseSought,
+                                                                [e.target.value]: true
+                                                            }
+                                                        });
+                                                    }
+                                                }}
+                                                value=""
+                                                className="p-3 border rounded-xl w-full appearance-none cursor-pointer bg-gray-50"
+                                            >
+                                                <option value="" disabled>+ Add Expertise</option>
+                                                {expertiseOptions
+                                                    .filter(option => !formData.areasOfExpertiseSought?.[option])
+                                                    .map((option) => (
+                                                        <option key={option} value={option}>
+                                                            {option}
+                                                        </option>
+                                                    ))
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                
+                                    {/* Navigation buttons */}
+                                    <div className="flex gap-4 w-full mt-6">
                                         <button 
-                                            className="w-full bg-gray-200 border border-gray-300 rounded-xl py-2.5 text-gray-600 mt-4"
+                                            className="w-full bg-gray-200 border border-gray-300 rounded-xl py-2.5 text-gray-600"
                                             type="button"
                                             onClick={handlePrevious}
                                         >
                                             Previous
                                         </button>
-
+                
                                         <button 
-                                            className="w-full bg-[#1F479A] rounded-xl py-2.5 text-white mt-4"
+                                            className="w-full bg-[#1F479A] rounded-xl py-2.5 text-white"
                                             type="button"
                                             onClick={handleNext}
                                         >
                                             Next
                                         </button>
                                     </div>
-
-
-                                </form>
-
-
+                                </div>
                             </div>
                         </>
                     )
@@ -884,11 +992,14 @@ const CompanySignup = () => {
             }
         }
 
+        console.log(formData);
 
     return (
         <div className="h-screen w-screen bg-[#EFF6FF] p-3 flex">
             
             {renderStep()}
+            
+            
         </div>
     );
 };
