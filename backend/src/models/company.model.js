@@ -1,27 +1,117 @@
-import mongoose from "mongoose";
 
-const schema = new mongoose.Schema({
-    CompanyName: {type: String, required: true},
-    CompanyAdress: {type: String, required: true},
-    CompanyEmail: {type: String, required: false},
-    Password: {type: String, required: true},
-    ConfirmPassword: {type: String, required: true},
-    IndustryType: {type: String, required: true},
-    WhereisyourHeadquarterlocated: {type: String, required: true},
-    CompanySize: {type: String, required: true},
-    YearofEstablishment: {type: String, required: true},
-    FirstName: {type: String, required: true},
-    LastName: {type: String, required: true},
-    Designation: {type: String, required: true},
-    Email: {type: String, required: true},
-    PhoneNumber: {type: String, required: true},
-    TypicalRoles: {type: String, required: true},
-    AreasofExpertiseSought: {type: String, required: true},
-    Companylogo: {type: String, required: false},
-    CompanyWebsite: {type: String, required: false},
-    LinkedinProfile: {type: String, required: false},
-    lastLogin: {type: Date, default: Date.now},
-    isVerified: {type: Boolean, default: false}});
+import mongoose from 'mongoose';
 
-const companySchema = mongoose.model("company", schema);
-export default companySchema;
+const companySchema = new mongoose.Schema({
+    companyName: {
+        type: String, 
+        required: true,
+        trim: true,
+    },
+    companyPhoneNumber: {
+        type: String, 
+        required: true,
+        trim: true
+    },
+    companyEmail: {
+        type: String,
+        trim: true,
+    },
+    
+   
+    password: {
+        type: String, 
+        required: true,
+        minlength: 6,
+    },
+    confirmPassword: {
+        type: String,
+        required: true,
+        minlength: 6,
+    },
+
+    industryType: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    headquarterLocation: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    companySize: {
+        type: String,
+        required: true,
+        
+    },
+    yearOfEstablishment: {
+        type: String,
+        required: true,
+    },
+    pointOfContactFirstName: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    pointOfContactLastName: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    pointOfContactDesignation: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    pointOfContactEmail: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+    },
+    pointOfContactPhoneNumber: {
+        type: String,
+        required: true,
+    },
+    jobRoles: {
+        type: Object,
+        required: true,
+        trim: true
+    },
+    areasOfExpertiseSought: {
+        type: Object,
+        required: true,
+        trim: true
+    },
+    companyLogo: {
+        type: String,
+        trim: true
+    },
+    companyWebsite: {
+        type: String,
+        trim: true,
+    },
+    linkedInProfile: {
+        type: String,
+        trim: true,
+    },
+    lastLogin: {
+        type: Date,
+        default: Date.now
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
+    verificationToken: String,
+    verificationTokenExpire: Date
+}, {
+    timestamps: true
+});
+
+
+const Company = mongoose.model('Company', companySchema);
+
+export default Company;

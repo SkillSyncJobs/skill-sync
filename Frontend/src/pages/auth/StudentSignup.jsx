@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { ArrowLeft, Building2, GraduationCap } from "lucide-react";
 
 const StudentSignup = () => {
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate(); 
   const [formData, setFormData] = useState({
     first_Name: "",
     last_Name: "",

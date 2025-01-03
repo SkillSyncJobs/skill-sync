@@ -13,7 +13,7 @@ const App = () => {
   return (
     <>
 
-      <Toaster position="top-center" />
+      <Toaster position="top-center"  containerStyle={{left: 350}}/>
         <Routes>
           <Route path='/' element={<LandingPage/>}/>
           <Route path='/auth/student-signup' element={<StudentSignup/>}/>

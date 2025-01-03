@@ -128,10 +128,7 @@ const CompanySignup = () => {
                     return true;
                 }
                 case 5: {
-                    if (!formData.companyLogo) {
-                        toast.error("Please upload company logo");
-                        return false;
-                    }
+                    formData.companyLogo
                     return true;
                 } 
                 case 6: {
@@ -172,20 +169,72 @@ const CompanySignup = () => {
             e.preventDefault();
             if (validateStep()) {
                 try {
-                    setIsLoading(true); // Start loading
-                    // Simulate API call
-                    await new Promise(resolve => setTimeout(resolve, 2000));
-                    // Your API call would go here
-                    // await axios.post('/api/company/signup', formData);
-                    
-                    setStep(7);
+                    setIsLoading(true);
+        
+                    // Create a new form data object with stringified objects
+                    const dataToSend = {
+                        ...formData,
+                        jobRoles: JSON.stringify(formData.jobRoles),
+                        areasOfExpertiseSought: JSON.stringify(formData.areasOfExpertiseSought),
+                    };
+        
+                    // Handle file upload if exists
+                    if (formData.companyLogo) {
+                        const fileData = new FormData();
+                        fileData.append('companyLogo', formData.companyLogo);
+                        
+                        // Upload file first
+                        const uploadResponse = await axios.post(
+                            "http://localhost:5005/api/upload",
+                            fileData,
+                            {
+                                headers: {
+                                    'Content-Type': 'multipart/form-data',
+                                },
+                            }
+                        );
+        
+                        // Add the uploaded file URL to the data
+                        dataToSend.companyLogo = uploadResponse.data.url;
+                    }
+        
+                    // Send the signup request
+                    const response = await axios.post(
+                        "http://localhost:5005/api/auth/company-signup",
+                        dataToSend,
+                        {
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                        }
+                    );
+        
+                    if (response.status === 201) { // Changed from 200 to 201 as per your backend
+                        toast.success("Account setup successful!");
+                        setStep(7);
+                    }
                 } catch (error) {
-                    toast.error("Registration failed. Please try again.");
+                    if (error.response) {
+                        const errorMessage = error.response.data.msg || "Registration Failed";
+                        toast.error(errorMessage);
+        
+                        if (error.response.status === 400) {
+                            const validationErrors = error.response.data.errors;
+                            if (validationErrors) {
+                                Object.keys(validationErrors).forEach(field => {
+                                    toast.error(`${field}: ${validationErrors[field]}`);
+                                });
+                            }
+                        }
+                    } else if (error.request) {
+                        toast.error("Network error. Please check your connection.");
+                    } else {
+                        toast.error("An unexpected error occurred.");
+                    }
+                    console.error("Signup error:", error);
                 } finally {
-                    setIsLoading(false); // Stop loading regardless of success/failure
+                    setIsLoading(false);
                 }
-
-                console.log(formData);
             }
         };
 
@@ -249,7 +298,7 @@ const CompanySignup = () => {
         const [imagePreview, setImagePreview] = useState(null);
 
         // Add this function to handle image upload
-        const handleImageUpload = (e) => {
+        const handleImageUpload = async (e) => {
             const file = e.target.files[0];
             const maxSize = 5 * 1024 * 1024; // 5MB
     
@@ -258,18 +307,29 @@ const CompanySignup = () => {
                 return;
             }
             if (file) {
-                // Update formData with the file
-                setFormData({
-                    ...formData,
-                    companyLogo: file
-                });
-
-                // Create preview URL
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    setImagePreview(reader.result);
-                };
-                reader.readAsDataURL(file);
+                // Create a FormData object to send the file
+                const formData = new FormData();
+                formData.append("file", file);
+        
+                try {
+                    // Call your upload endpoint
+                    const response = await axios.post("http://localhost:5005/api/upload", formData, {
+                        headers: {
+                            "Content-Type": "multipart/form-data",
+                        },
+                    });
+        
+                    // Assuming the response contains the URL of the uploaded image
+                    const imageUrl = response.data.url; // Adjust based on your API response
+                    setFormData({
+                        ...formData,
+                        companyLogo: imageUrl, // Set the URL in the formData
+                    });
+                    toast.success("Logo uploaded successfully!");
+                } catch (error) {
+                    toast.error("Failed to upload logo.");
+                    console.error("Image upload error:", error);
+                }
             }
         };
         
